@@ -10,8 +10,7 @@ include_directories(${EMP-OT_INCLUDE_DIRS})
 find_package(emp-zk REQUIRED)
 include_directories(${EMP-ZK_INCLUDE_DIRS})
 
-set(sources
-  demo-izk.cpp
-)
-add_executable(demo-izk ${sources})
-target_link_libraries(demo-izk ${EMP-OT_LIBRARIES} ${EMP-ZK_LIBRARIES})
+
+include_directories(.)
+add_executable(test_demo-izk test/demo-izk.cpp)
+target_link_libraries(test_demo-izk ${EMP-OT_LIBRARIES} ${EMP-ZK_LIBRARIES})

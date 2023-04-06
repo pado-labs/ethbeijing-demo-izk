@@ -1,7 +1,7 @@
 #pragma once
 
 #include <emp-tool/emp-tool.h>
-#include "emp-zk/emp-zk.h"
+#include <emp-zk/emp-zk.h>
 using namespace emp;
 
 #include <iostream>
