@@ -1,0 +1,16 @@
+[submodule "3rd/emp-tool"]
+	path = 3rd/emp-tool
+	url = https://github.com/ujnss/emp-tool.git
+	branch = refine_bind
+[submodule "3rd/emp-ot"]
+	path = 3rd/emp-ot
+	url = https://github.com/emp-toolkit/emp-ot.git
+[submodule "3rd/emp-zk"]
+	path = 3rd/emp-zk
+	url = https://github.com/emp-toolkit/emp-zk.git
+[submodule "3rd/secp256k1"]
+	path = 3rd/secp256k1
+	url = https://github.com/bitcoin-core/secp256k1.git
+[submodule "3rd/cpp-httplib"]
+	path = 3rd/cpp-httplib
+	url = https://github.com/yhirose/cpp-httplib.git
