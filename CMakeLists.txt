@@ -12,8 +12,13 @@ include_directories(${EMP-ZK_INCLUDE_DIRS})
 
 
 include_directories(.)
+link_directories(${CMAKE_INSTALL_PREFIX}/lib)
+
 add_executable(test_demo-izk test/demo-izk.cpp)
 target_link_libraries(test_demo-izk ${EMP-OT_LIBRARIES} ${EMP-ZK_LIBRARIES})
 
 add_executable(test_demo-http test/demo-http.cpp)
-target_link_libraries(test_demo-http ${EMP-OT_LIBRARIES} ${EMP-ZK_LIBRARIES})
+target_link_libraries(test_demo-http)
+
+add_executable(test_demo-ecdsa test/demo-ecdsa.cpp)
+target_link_libraries(test_demo-ecdsa secp256k1)
