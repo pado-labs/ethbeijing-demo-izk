@@ -14,3 +14,6 @@ include_directories(${EMP-ZK_INCLUDE_DIRS})
 include_directories(.)
 add_executable(test_demo-izk test/demo-izk.cpp)
 target_link_libraries(test_demo-izk ${EMP-OT_LIBRARIES} ${EMP-ZK_LIBRARIES})
+
+add_executable(test_demo-http test/demo-http.cpp)
+target_link_libraries(test_demo-http ${EMP-OT_LIBRARIES} ${EMP-ZK_LIBRARIES})
