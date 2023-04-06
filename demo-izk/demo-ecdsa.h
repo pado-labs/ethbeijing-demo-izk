@@ -1,6 +1,6 @@
 #pragma once
 
-#include <demo-izk/examples_util.h>
+#include <demo-izk/utils.h>
 #include <secp256k1.h>
 #include <secp256k1_recovery.h>
 
