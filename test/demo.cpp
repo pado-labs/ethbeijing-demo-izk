@@ -3,6 +3,10 @@
 #include <demo-izk/demo-ecdsa.h>
 #include <demo-izk/demo-http.h>
 
+#include <unistd.h>
+#include <thread>
+void f_init_zk(DemoIZK* izk) { izk->init_zk(); }
+
 class Demo {
   int party;
   int mpc_port = 12345;
@@ -33,6 +37,7 @@ class Demo {
         http_port, &izk,
         [](DemoIZK* izk, const multimap<string, string>& req, multimap<string, string>& res) {
           {
+            while (izk->in_processing_init_zk) { usleep(100000); }
             int sync_code = 1;
             izk->sync_data((char*)&sync_code, sizeof(sync_code));
 
@@ -57,13 +62,20 @@ class Demo {
 
             izk->geq(private_value, public_value);
 
-            int ret;
-            string signature(132, '0');
+            int ret = 0;
             izk->sync_data((char*)&ret, sizeof(ret), BOB, ALICE);
+            if (ret == -1) return;
+
+            string signature(132, '0');
             izk->sync_data((char*)signature.data(), signature.length(), BOB, ALICE);
             res.insert({string("res"), to_string(ret)});
             res.insert({string("signature"), signature});
             cout << "-----------------------------------\n\n";
+            {
+              izk->in_processing_init_zk = true;
+              std::thread t(f_init_zk, izk);
+              t.detach();
+            }
           }
         });
     } else {
@@ -73,16 +85,16 @@ class Demo {
         if (sync_code == 0) break;
         if (sync_code == 1) {
           size_t public_value = 0;
-          izk.sync_data((char*)&public_value, sizeof(public_value));
-          // cout << "public_value:" << public_value / 100.0 << endl;
-
           string truehash(66, '0'), falsehash(66, '0');
+          izk.sync_data((char*)&public_value, sizeof(public_value));
           izk.sync_data((char*)truehash.data(), truehash.length());
           izk.sync_data((char*)falsehash.data(), falsehash.length());
+          // cout << "public_value:" << public_value / 100.0 << endl;
           // cout << "truehash:" << truehash << endl;
           // cout << "falsehash:" << falsehash << endl;
 
           int ret = izk.geq(0, public_value);
+          izk.sync_data((char*)&ret, sizeof(ret), BOB, ALICE);
           if (ret == -1) {
             cout << "izk failed" << endl;
             continue;
@@ -94,11 +106,12 @@ class Demo {
           cout << "hash:" << hash << endl;
           ecdsa.sign(sk, hash, signature);
           cout << "signature:" << signature << endl;
-
-          // to prover
-          izk.sync_data((char*)&ret, sizeof(ret), BOB, ALICE);
           izk.sync_data((char*)signature.data(), signature.length(), BOB, ALICE);
           cout << "-----------------------------------\n\n";
+          {
+            izk.in_processing_init_zk = true;
+            izk.init_zk();
+          }
         }
       }
     }

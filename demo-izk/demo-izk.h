@@ -18,6 +18,7 @@ class DemoIZK {
   int party = 0;
   NetIO* io = nullptr;
   BoolIO<NetIO>* ios[threads];
+  bool is_setup = false;
 
  public:
   inline bool is_prover() { return _is_prover; }
@@ -32,7 +33,18 @@ class DemoIZK {
     io = new NetIO(!_is_prover ? nullptr : host, port);
     for (int i = 0; i < threads; i++) ios[i] = new BoolIO<NetIO>(io, _is_prover);
 
+    init_zk();
     return true;
+  }
+
+  bool in_processing_init_zk = false;
+  void init_zk() {
+    in_processing_init_zk = true;
+    if (!is_setup) {
+      setup_zk_bool<BoolIO<NetIO>>(ios, threads, party);
+      is_setup = true;
+    }
+    in_processing_init_zk = false;
   }
 
   /**
@@ -42,18 +54,15 @@ class DemoIZK {
    *  -1 failed
    */
   int geq(size_t in, size_t value) {
-    auto start = clock_start();
-    setup_zk_bool<BoolIO<NetIO>>(ios, threads, party);
+    // setup_zk_bool<BoolIO<NetIO>>(ios, threads, party);
+    init_zk();
 
     Integer _in(64, in, ALICE);
-
     bool res = compare(_in, value);
     // cout << "run_compare_izk res: " << res << endl;
 
     bool cheat = finalize_zk_bool<BoolIO<NetIO>>();
-    double elapsed = time_from(start);
-    cout << "elapsed:" << elapsed / 1e6 << endl;
-
+    is_setup = false;
     if (cheat) {
       error("cheat!\n");
       return -1;
