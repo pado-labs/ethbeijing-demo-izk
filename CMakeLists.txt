@@ -22,3 +22,6 @@ target_link_libraries(test_demo-http)
 
 add_executable(test_demo-ecdsa test/demo-ecdsa.cpp)
 target_link_libraries(test_demo-ecdsa secp256k1)
+
+add_executable(test_demo test/demo.cpp)
+target_link_libraries(test_demo ${EMP-OT_LIBRARIES} ${EMP-ZK_LIBRARIES} secp256k1)
