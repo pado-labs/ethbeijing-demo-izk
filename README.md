@@ -13,6 +13,11 @@ bash ./compile.sh
 
 ## Running
 
+```sh
+bash ./run_demo.sh
+```
+
+**OR**
 
 ```sh
 # prepare
