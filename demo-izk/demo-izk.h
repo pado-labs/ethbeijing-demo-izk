@@ -35,37 +35,40 @@ class DemoIZK {
     return true;
   }
 
-  // return if in(private) >= value(public)
-  bool geq(size_t in, size_t value) {
-    cout << "before sync base value, is_prover:" << _is_prover << " in:" << in << " value:" << value
-         << endl;
-    sync_base_value(value);
-
-    cout << "after sync base value, is_prover:" << _is_prover << " in:" << in << " value:" << value
-         << endl;
+  /**
+   * return
+   *   1 if in(private) >= value(public)
+   *   0 if in < value
+   *  -1 failed
+   */
+  int geq(size_t in, size_t value) {
+    auto start = clock_start();
     setup_zk_bool<BoolIO<NetIO>>(ios, threads, party);
 
     Integer _in(64, in, ALICE);
 
     bool res = compare(_in, value);
-    cout << "run_compare_izk res: " << res << endl;
+    // cout << "run_compare_izk res: " << res << endl;
 
     bool cheat = finalize_zk_bool<BoolIO<NetIO>>();
+    double elapsed = time_from(start);
+    cout << "elapsed:" << elapsed / 1e6 << endl;
+
     if (cheat) {
       error("cheat!\n");
-      return false;
+      return -1;
     }
-    return true;
+
+    return res ? 1 : 0;
+  }
+
+  void sync_data(char* data, size_t size, int from = ALICE, int to = BOB) {
+    if (party == from) io->send_data((const char*)data, size);
+    if (party == to) io->recv_data(data, size);
+    io->flush();
   }
 
  private:
-  void sync_base_value(size_t& value) {
-    if (_is_prover)
-      io->send_data((const char*)&value, sizeof(value));
-    else
-      io->recv_data((char*)&value, sizeof(value));
-  }
-
   bool compare(Integer& in, size_t value) {
     size_t len = (in.size() > sizeof(size_t) * 8) ? in.size() : sizeof(size_t) * 8;
     Integer ivalue(len, value, PUBLIC);
