@@ -74,13 +74,13 @@ class Demo {
         if (sync_code == 1) {
           size_t public_value = 0;
           izk.sync_data((char*)&public_value, sizeof(public_value));
-          cout << "public_value:" << public_value / 100.0 << endl;
+          // cout << "public_value:" << public_value / 100.0 << endl;
 
           string truehash(66, '0'), falsehash(66, '0');
           izk.sync_data((char*)truehash.data(), truehash.length());
           izk.sync_data((char*)falsehash.data(), falsehash.length());
-          cout << "truehash:" << truehash << endl;
-          cout << "falsehash:" << falsehash << endl;
+          // cout << "truehash:" << truehash << endl;
+          // cout << "falsehash:" << falsehash << endl;
 
           int ret = izk.geq(0, public_value);
           if (ret == -1) {
