@@ -29,7 +29,11 @@ class Demo {
   }
 
   bool start() {
-    cout << "izk host:" << mpc_host << ", port:" << mpc_port << endl;
+    if (party == 1) {
+      cout << "izk Prover will connect to " << mpc_host << ":" << mpc_port << endl;
+    } else {
+      cout << "izk Verifier listen on " << mpc_host << ":" << mpc_port << endl;
+    }
     izk.init(party, mpc_port, mpc_host.c_str());
 
     if (party == ALICE) {
