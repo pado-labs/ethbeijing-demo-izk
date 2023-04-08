@@ -33,14 +33,20 @@ class DemoIZK {
     io = new NetIO(!_is_prover ? nullptr : host, port);
     for (int i = 0; i < threads; i++) ios[i] = new BoolIO<NetIO>(io, _is_prover);
 
+    geq(0, 0);
+
     init_zk();
     return true;
   }
+
+  // todo: here only one round
+  size_t sent_bytes() { return io->counter; }
 
   bool in_processing_init_zk = false;
   void init_zk() {
     in_processing_init_zk = true;
     if (!is_setup) {
+      io->counter = 0; // todo: set io->counter to one round
       setup_zk_bool<BoolIO<NetIO>>(ios, threads, party);
       is_setup = true;
     }

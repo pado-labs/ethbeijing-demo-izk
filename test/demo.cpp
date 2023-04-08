@@ -59,6 +59,7 @@ class Demo {
             izk->sync_data((char*)&public_value, sizeof(public_value));
             izk->sync_data((char*)truehash.data(), truehash.length());
             izk->sync_data((char*)falsehash.data(), falsehash.length());
+            cout << "base_value:" << public_value / 100.0 << endl;
 
             izk->geq(private_value, public_value);
 
@@ -70,6 +71,7 @@ class Demo {
             izk->sync_data((char*)signature.data(), signature.length(), BOB, ALICE);
             res.insert({string("res"), to_string(ret)});
             res.insert({string("signature"), signature});
+            cout << "izk Prover sent bytes:" << izk->sent_bytes() << endl;
             cout << "-----------------------------------\n\n";
             {
               izk->in_processing_init_zk = true;
@@ -89,7 +91,7 @@ class Demo {
           izk.sync_data((char*)&public_value, sizeof(public_value));
           izk.sync_data((char*)truehash.data(), truehash.length());
           izk.sync_data((char*)falsehash.data(), falsehash.length());
-          // cout << "public_value:" << public_value / 100.0 << endl;
+          cout << "base_value:" << public_value / 100.0 << endl;
           // cout << "truehash:" << truehash << endl;
           // cout << "falsehash:" << falsehash << endl;
 
@@ -107,6 +109,7 @@ class Demo {
           ecdsa.sign(sk, hash, signature);
           cout << "signature:" << signature << endl;
           izk.sync_data((char*)signature.data(), signature.length(), BOB, ALICE);
+          cout << "izk Verifier sent bytes:" << izk.sent_bytes() << endl;
           cout << "-----------------------------------\n\n";
           {
             izk.in_processing_init_zk = true;
